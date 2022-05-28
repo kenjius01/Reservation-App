@@ -116,6 +116,7 @@
 }
 
 .date {
+  z-index: 5;
   position: absolute;
   top: 60px;
   border-radius: 4px;
@@ -123,6 +124,7 @@
 }
 
 .options {
+  z-index: 5;
   position: absolute;
   top: 60px;
   background-color: #fff;
