@@ -49,6 +49,7 @@
   border: none;
   border-radius: 4px;
   padding: 4px;
+  font-weight: 600;
 }
 
 .hfRating .hfReview {
