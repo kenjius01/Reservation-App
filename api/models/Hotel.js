@@ -36,7 +36,7 @@ const hotelSchema = new Schema({
   rating: {
     type: Number,
     min: 0,
-    mas: 5,
+    mas: 10,
   },
   rooms: {
     type: [String],
