@@ -12,24 +12,31 @@ import MailList from '../../component/mailList/MailList';
 import Footer from '../../component/footer/Footer';
 import { useContext, useEffect, useState } from 'react';
 import useFetch from '../../hooks/useFetch';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SearchContext } from '../../context/SearchContext';
+import { AuthContext } from '../../context/AuthContext';
+import Reserve from '../../component/reserve/Reserve';
 
 const Hotel = () => {
     const [slideNumber, setSlideNumber] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
     const params = useParams();
 
     const { data, loading, error } = useFetch(`/hotels/find/${params.id}`);
     const { dates, options } = useContext(SearchContext);
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    console.log(dates);
     const MILISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
     const dayDifference = (date1, date2) => {
-        const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+        const timeDiff = Math.abs(
+            new Date(date2).getTime() - new Date(date1).getTime()
+        );
         const dayDiff = Math.ceil(timeDiff / MILISECONDS_PER_DAY);
-        return dayDiff;
+
+        return dayDiff === 0 ? 1 : dayDiff;
     };
     const days = dayDifference(dates[0].startDate, dates[0].endDate);
     useEffect(() => {
@@ -57,6 +64,13 @@ const Hotel = () => {
             handleMove('left');
         } else if (e.keyCode === 39) {
             handleMove('right');
+        }
+    };
+    const handleBook = () => {
+        if (user) {
+            setOpenModal(true);
+        } else {
+            navigate('/login');
         }
     };
 
@@ -100,7 +114,9 @@ const Hotel = () => {
                             </div>
                         )}
                         <div className='hotelWrapper'>
-                            <button className='bookBtn'>Reserve</button>
+                            <button onClick={handleBook} className='bookBtn'>
+                                Reserve
+                            </button>
                             <h1 className='hotelTitle'>{data.title}</h1>
                             <div className='hotelAddress'>
                                 <FontAwesomeIcon
@@ -164,12 +180,17 @@ const Hotel = () => {
                                         </b>{' '}
                                         ({days} nights)
                                     </h2>
-                                    <button>Reserve or Book Now</button>
+                                    <button onClick={handleBook}>
+                                        Reserve or Book Now
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </>
+            )}
+            {openModal && (
+                <Reserve setOpen={setOpenModal} hotelId={params.id} />
             )}
             <MailList />
             <Footer />

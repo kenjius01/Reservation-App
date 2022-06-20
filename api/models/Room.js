@@ -24,4 +24,4 @@ const roomShema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model('room', roomShema);
+export default mongoose.model('Room', roomShema);

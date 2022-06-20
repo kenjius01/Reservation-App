@@ -5,11 +5,12 @@ import Footer from '../../component/footer/Footer';
 import MailList from '../../component/mailList/MailList';
 
 import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { DateRange } from 'react-date-range';
 import SearchItem from '../../component/searchItem/SearchItem';
 import useFetch from '../../hooks/useFetch';
+import { SearchContext } from '../../context/SearchContext';
 
 const List = () => {
     const [openDate, setOpenDate] = useState(false);
@@ -23,12 +24,20 @@ const List = () => {
     const { data, loading, error, reFetch } = useFetch(
         `/hotels?city=${destination}&min=${min}&max=${max}`
     );
+    const { dispatch } = useContext(SearchContext);
+
     useEffect(() => {
         if (error.length > 0) console.log(error);
     }, [error]);
 
     const handleClick = () => {
+        dispatch({
+            type: 'NEW_SEARCH',
+            payload: { destination, dates, options },
+        });
+        console.log(typeof(options.room));
         reFetch();
+        
     };
     return (
         <div>
@@ -41,7 +50,7 @@ const List = () => {
                         <div className='lsItem'>
                             <label htmlFor=''>Destination</label>
                             <input
-                                placeholder={destination ?? destination}
+                                value={destination ?? destination}
                                 type='text'
                                 onChange={(e) => setDestination(e.target.value)}
                             />
